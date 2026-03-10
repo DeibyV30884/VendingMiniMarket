@@ -15,7 +15,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form MenuPrincipal
      */
-    public MenuPrincipal() {
+    public MenuPrincipal(String nombre, String rol) {
         initComponents();
     }
 
@@ -66,7 +66,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new MenuPrincipal().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new MenuPrincipal("","").setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
