@@ -5,12 +5,13 @@
 package com.vendingminimarket.vendingminimarket;
 
 import com.vendingminimarket.vista.Login;
+import com.vendingminimarket.vista.GestionProductos;
 import javax.swing.SwingUtilities;
 
 public class VendingMiniMarket {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new Login().setVisible(true);
+            new GestionProductos().setVisible(true);
         });
     }
 }
