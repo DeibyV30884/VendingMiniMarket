@@ -32,7 +32,7 @@ public class GestionProductos extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        btnVolver2 = new javax.swing.JButton();
+        btnVolver = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         txtBuscar = new javax.swing.JTextField();
         btnBuscar = new javax.swing.JButton();
@@ -71,14 +71,15 @@ public class GestionProductos extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Gestión de Productos");
 
-        btnVolver2.setBackground(new java.awt.Color(255, 255, 255));
-        btnVolver2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        btnVolver2.setForeground(new java.awt.Color(61, 122, 107));
-        btnVolver2.setText("Volver");
-        btnVolver2.setBorderPainted(false);
-        btnVolver2.addActionListener(new java.awt.event.ActionListener() {
+        btnVolver.setBackground(new java.awt.Color(255, 255, 255));
+        btnVolver.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        btnVolver.setForeground(new java.awt.Color(61, 122, 107));
+        btnVolver.setText("Volver");
+        btnVolver.setBorderPainted(false);
+        btnVolver.setOpaque(true);
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnVolver2ActionPerformed(evt);
+                btnVolverActionPerformed(evt);
             }
         });
 
@@ -90,7 +91,7 @@ public class GestionProductos extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnVolver2)
+                .addComponent(btnVolver)
                 .addGap(17, 17, 17))
         );
         jPanel2Layout.setVerticalGroup(
@@ -98,7 +99,7 @@ public class GestionProductos extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnVolver2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(11, Short.MAX_VALUE))
         );
@@ -307,9 +308,10 @@ public class GestionProductos extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
-    private void btnVolver2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolver2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnVolver2ActionPerformed
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
+           new MenuPrincipal("", "").setVisible(true);
+    this.dispose();
+    }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnNuevoProveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoProveedorActionPerformed
         // TODO add your handling code here:
@@ -360,7 +362,7 @@ public class GestionProductos extends javax.swing.JFrame {
     private javax.swing.JButton btnNuevaCategoria;
     private javax.swing.JButton btnNuevoProducto;
     private javax.swing.JButton btnNuevoProveedor;
-    private javax.swing.JButton btnVolver2;
+    private javax.swing.JButton btnVolver;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
