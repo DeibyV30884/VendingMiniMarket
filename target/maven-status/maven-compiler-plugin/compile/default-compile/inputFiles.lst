@@ -2,7 +2,10 @@
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/modelo/Usuario.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vendingminimarket/VendingMiniMarket.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/AsignarProductoMaquina.java
+/Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/DialogEditarProducto.java
+/Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/DialogNuevaCategoria.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/DialogNuevoProducto.java
+/Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/DialogNuevoProveedor.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/GestionMaquinas.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/GestionPedidos.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/GestionProductos.java

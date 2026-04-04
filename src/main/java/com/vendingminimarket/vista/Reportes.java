@@ -19,9 +19,6 @@ public class Reportes extends javax.swing.JFrame {
      */
     public Reportes() {
     initComponents();
-    cargarDatosPrueba();
-    calcularTotales();
-    cargarTotalesUsuarios();
 }
 
     /**
@@ -328,52 +325,12 @@ public class Reportes extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox1ActionPerformed
     /// datos de prueba//
     private void cargarDatosPrueba() {
-
-        DefaultTableModel modelo
-                = (DefaultTableModel) jTable1.getModel();
-
-        modelo.setRowCount(0);
-
-        modelo.addRow(new Object[]{"Coca-Cola", 45, 67500, 36000, 31500});
-        modelo.addRow(new Object[]{"Doritos", 30, 36000, 18000, 18000});
-        modelo.addRow(new Object[]{"Froot Loops", 25, 20000, 10000, 10000});
-        modelo.addRow(new Object[]{"Takis", 15, 40000, 24000, 16000});
     }
 
     private void calcularTotales() {
-
-        DefaultTableModel modelo
-                = (DefaultTableModel) jTable1.getModel();
-
-        int totalUnidades = 0;
-        double totalIngresos = 0;
-        double totalCostos = 0;
-
-        for (int i = 0; i < modelo.getRowCount(); i++) {
-
-            totalUnidades += Integer.parseInt(
-                    modelo.getValueAt(i, 1).toString());
-
-            totalIngresos += Double.parseDouble(
-                    modelo.getValueAt(i, 2).toString());
-
-            totalCostos += Double.parseDouble(
-                    modelo.getValueAt(i, 3).toString());
-        }
-
-        double totalFinal = totalIngresos - totalCostos;
-
-        lblUnidades.setText(String.valueOf(totalUnidades));
-        lblIngresos.setText("₡" + totalIngresos);
-        lblCostos.setText("₡" + totalCostos);
-        lblTotal.setText("₡" + totalFinal);
     }
 
     private void cargarTotalesUsuarios() {
-
-        txtProveedores.setText("8");
-        txtAdministradores.setText("1");
-        txtColaboradores.setText("3");
     }
 
     /**

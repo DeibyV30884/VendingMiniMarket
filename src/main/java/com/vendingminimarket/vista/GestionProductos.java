@@ -9,7 +9,7 @@ package com.vendingminimarket.vista;
  * @author deiby
  */
 public class GestionProductos extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GestionProductos.class.getName());
 
     /**
@@ -301,7 +301,9 @@ public class GestionProductos extends javax.swing.JFrame {
     }//GEN-LAST:event_txtBuscarActionPerformed
 
     private void btnNuevoProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoProductoActionPerformed
-        // TODO add your handling code here:
+        DialogNuevoProducto dialog = new DialogNuevoProducto(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }//GEN-LAST:event_btnNuevoProductoActionPerformed
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
@@ -309,16 +311,20 @@ public class GestionProductos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-           new MenuPrincipal("", "").setVisible(true);
-    this.dispose();
+        new MenuPrincipal("", "").setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnNuevoProveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoProveedorActionPerformed
-        // TODO add your handling code here:
+        DialogNuevoProveedor dialog = new DialogNuevoProveedor(this, true);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }//GEN-LAST:event_btnNuevoProveedorActionPerformed
 
     private void btnNuevaCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaCategoriaActionPerformed
-        // TODO add your handling code here:
+        DialogNuevaCategoria dialog = new DialogNuevaCategoria(this, true);
+        dialog.setLocationRelativeTo(this); // Lo centra sobre GestionProductos
+        dialog.setVisible(true);
     }//GEN-LAST:event_btnNuevaCategoriaActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed

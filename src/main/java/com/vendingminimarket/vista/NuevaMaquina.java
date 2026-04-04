@@ -83,6 +83,7 @@ public class NuevaMaquina extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Codigo de Maquina");
 
+        txtBuscar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
         txtBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBuscarActionPerformed(evt);
@@ -109,18 +110,21 @@ public class NuevaMaquina extends javax.swing.JFrame {
             }
         });
 
+        txtBuscar1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
         txtBuscar1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBuscar1ActionPerformed(evt);
             }
         });
 
+        txtBuscar2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
         txtBuscar2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBuscar2ActionPerformed(evt);
             }
         });
 
+        txtBuscar3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
         txtBuscar3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBuscar3ActionPerformed(evt);
@@ -200,7 +204,7 @@ public class NuevaMaquina extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

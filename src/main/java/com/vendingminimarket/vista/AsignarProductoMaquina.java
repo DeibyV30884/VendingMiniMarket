@@ -72,6 +72,7 @@ public class AsignarProductoMaquina extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Maquina");
 
+        bntCancelar.setBackground(new java.awt.Color(255, 255, 255));
         bntCancelar.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         bntCancelar.setForeground(new java.awt.Color(61, 122, 107));
         bntCancelar.setText("Cancelar");
@@ -82,6 +83,7 @@ public class AsignarProductoMaquina extends javax.swing.JFrame {
             }
         });
 
+        btnAsignar.setBackground(new java.awt.Color(255, 255, 255));
         btnAsignar.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         btnAsignar.setForeground(new java.awt.Color(61, 122, 107));
         btnAsignar.setText("Asignar");
@@ -92,18 +94,21 @@ public class AsignarProductoMaquina extends javax.swing.JFrame {
             }
         });
 
+        txtBuscar1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
         txtBuscar1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBuscar1ActionPerformed(evt);
             }
         });
 
+        txtBuscar2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
         txtBuscar2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBuscar2ActionPerformed(evt);
             }
         });
 
+        txtBuscar3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
         txtBuscar3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBuscar3ActionPerformed(evt);
