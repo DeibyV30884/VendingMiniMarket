@@ -1,0 +1,78 @@
+
+--Funcion para validar que el correo tenga el formato correcto
+CREATE OR REPLACE FUNCTION FN_VALIDAR_EMAIL(VEMAIL IN VARCHAR2)
+RETURN NUMBER
+AS
+BEGIN
+    IF REGEXP_LIKE(VEMAIL, '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$') THEN
+        RETURN 1;
+    ELSE
+        RETURN 0;
+    END IF;
+END;
+
+
+
+
+-- Aqui se valida que el telefono tenga el formato 0000-0000
+CREATE OR REPLACE FUNCTION FN_VALIDAR_TELEFONO(VTEL IN VARCHAR2)
+RETURN NUMBER
+AS
+BEGIN
+    IF REGEXP_LIKE(VTEL, '^[0-9]{4}-[0-9]{4}$') THEN
+        RETURN 1;
+    ELSE
+        RETURN 0;
+    END IF;
+END;
+
+
+
+
+-- Esta es la funcion que calcula el precio de venta cuando se agrega un nuevo producto
+CREATE OR REPLACE FUNCTION FN_CALCULAR_PRECIO(
+    VCOSTO IN NUMBER,
+    VGANANCIA IN NUMBER
+)
+RETURN NUMBER
+AS
+    VPRECIO NUMBER;
+BEGIN
+    VPRECIO := VCOSTO * (1 + VGANANCIA / 100) * 1.13; --Esto asumiendo el 13% de IVA
+    RETURN VPRECIO;
+END;
+
+--Prueba
+SELECT FN_CALCULAR_PRECIO(500, 30) FROM DUAL;
+
+--Consola
+734,5
+
+
+
+
+--Listar categorias y proveedores para saber cuales hay cuando se agregre un nuevo producto
+CREATE OR REPLACE FUNCTION FN_LISTAR_CATEGORIAS
+RETURN SYS_REFCURSOR
+AS
+    VDATOS SYS_REFCURSOR;
+BEGIN
+    OPEN VDATOS FOR
+        SELECT ID_CATEGORIA, NOMBRE
+        FROM CATEGORIA
+        ORDER BY NOMBRE;
+    RETURN VDATOS;
+END;
+
+CREATE OR REPLACE FUNCTION FN_LISTAR_PROVEEDORES
+RETURN SYS_REFCURSOR
+AS
+    VDATOS SYS_REFCURSOR;
+BEGIN
+    OPEN VDATOS FOR
+        SELECT ID_PROVEEDOR, NOMBRE
+        FROM PROVEEDOR
+        ORDER BY NOMBRE;
+    RETURN VDATOS;
+END;
+

@@ -1,10 +1,17 @@
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/conexion/ConexionDB.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/modelo/Usuario.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vendingminimarket/VendingMiniMarket.java
+/Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/AsignarProductoMaquina.java
+/Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/DialogEditarProducto.java
+/Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/DialogNuevaCategoria.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/DialogNuevoProducto.java
+/Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/DialogNuevoProveedor.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/GestionMaquinas.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/GestionPedidos.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/GestionProductos.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/Login.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/MenuPrincipal.java
+/Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/NuevaMaquina.java
+/Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/NuevoPedido.java
+/Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/RecargarProducto.java
 /Users/deiby/NetBeansProjects/proyecto_sql/VendingMiniMarket/src/main/java/com/vendingminimarket/vista/Reportes.java
