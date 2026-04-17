@@ -27,50 +27,50 @@ public class DialogNuevoProducto extends javax.swing.JDialog {
         cargarCategorias();   // <-- agregás estas dos líneas
         cargarProveedores();
     }
-    
+
     private void cargarCategorias() {
-    try {
-        CallableStatement cs = ConexionDB.getConexion()
-            .prepareCall("{? = CALL FN_LISTAR_CATEGORIAS()}");
+        try {
+            CallableStatement cs = ConexionDB.getConexion()
+                    .prepareCall("{? = CALL FN_LISTAR_CATEGORIAS()}");
 
-        cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
-        cs.execute();
+            cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+            cs.execute();
 
-        ResultSet rs = (ResultSet) cs.getObject(1);
-        JcbCategoria.removeAllItems();
+            ResultSet rs = (ResultSet) cs.getObject(1);
+            JcbCategoria.removeAllItems();
 
-        while (rs.next()) {
-            JcbCategoria.addItem(rs.getInt("ID_CATEGORIA") + " - " + rs.getString("NOMBRE"));
+            while (rs.next()) {
+                JcbCategoria.addItem(rs.getInt("ID_CATEGORIA") + " - " + rs.getString("NOMBRE"));
+            }
+            rs.close();
+            cs.close();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error cargando categorias: " + e.getMessage());
         }
-        rs.close();
-        cs.close();
-
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Error cargando categorias: " + e.getMessage());
     }
-}
 
-private void cargarProveedores() {
-    try {
-        CallableStatement cs = ConexionDB.getConexion()
-            .prepareCall("{? = CALL FN_LISTAR_PROVEEDORES()}");
+    private void cargarProveedores() {
+        try {
+            CallableStatement cs = ConexionDB.getConexion()
+                    .prepareCall("{? = CALL FN_LISTAR_PROVEEDORES()}");
 
-        cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
-        cs.execute();
+            cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+            cs.execute();
 
-        ResultSet rs = (ResultSet) cs.getObject(1);
-        JcbProveedor.removeAllItems();
+            ResultSet rs = (ResultSet) cs.getObject(1);
+            JcbProveedor.removeAllItems();
 
-        while (rs.next()) {
-            JcbProveedor.addItem(rs.getInt("ID_PROVEEDOR") + " - " + rs.getString("NOMBRE"));
+            while (rs.next()) {
+                JcbProveedor.addItem(rs.getInt("ID_PROVEEDOR") + " - " + rs.getString("NOMBRE"));
+            }
+            rs.close();
+            cs.close();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error cargando proveedores: " + e.getMessage());
         }
-        rs.close();
-        cs.close();
-
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Error cargando proveedores: " + e.getMessage());
     }
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -383,49 +383,51 @@ private void cargarProveedores() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
+        dispose();
+        getOwner().setVisible(true);
+        getOwner().toFront();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-    String vnombre = txtNombre.getText().trim();
-    String vcosto = txtPrecioCosto.getText().trim();
-    String vganancia = txtGanancias.getText().trim();
-    String vstock = txtInventario.getText().trim();
+        String vnombre = txtNombre.getText().trim();
+        String vcosto = txtPrecioCosto.getText().trim();
+        String vganancia = txtGanancias.getText().trim();
+        String vstock = txtInventario.getText().trim();
 
-    if (vnombre.isEmpty() || vcosto.isEmpty() || vganancia.isEmpty() || vstock.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios");
-        return;
-    }
+        if (vnombre.isEmpty() || vcosto.isEmpty() || vganancia.isEmpty() || vstock.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios");
+            return;
+        }
 
-    try {
-        // Leer el ID del combo (el formato es "1 - Bebidas")
-        String itemCat = (String) JcbCategoria.getSelectedItem();
-        int vidCategoria = Integer.parseInt(itemCat.split(" - ")[0]);
+        try {
+            // Leer el ID del combo (el formato es "1 - Bebidas")
+            String itemCat = (String) JcbCategoria.getSelectedItem();
+            int vidCategoria = Integer.parseInt(itemCat.split(" - ")[0]);
 
-        String itemProv = (String) JcbProveedor.getSelectedItem();
-        int vidProveedor = Integer.parseInt(itemProv.split(" - ")[0]);
+            String itemProv = (String) JcbProveedor.getSelectedItem();
+            int vidProveedor = Integer.parseInt(itemProv.split(" - ")[0]);
 
-        CallableStatement cs = ConexionDB.getConexion()
-            .prepareCall("{CALL SP_INSERTAR_PRODUCTO(?, ?, ?, ?, ?, ?)}");
+            CallableStatement cs = ConexionDB.getConexion()
+                    .prepareCall("{CALL SP_INSERTAR_PRODUCTO(?, ?, ?, ?, ?, ?)}");
 
-        cs.setString(1, vnombre);
-        cs.setInt(2, vidCategoria);
-        cs.setInt(3, vidProveedor);
-        cs.setDouble(4, Double.parseDouble(vcosto));
-        cs.setDouble(5, Double.parseDouble(vganancia));
-        cs.setInt(6, Integer.parseInt(vstock));
+            cs.setString(1, vnombre);
+            cs.setInt(2, vidCategoria);
+            cs.setInt(3, vidProveedor);
+            cs.setDouble(4, Double.parseDouble(vcosto));
+            cs.setDouble(5, Double.parseDouble(vganancia));
+            cs.setInt(6, Integer.parseInt(vstock));
 
-        cs.execute();
-        cs.close();
+            cs.execute();
+            cs.close();
 
-        JOptionPane.showMessageDialog(this, "Producto guardado correctamente");
-        dispose();
+            JOptionPane.showMessageDialog(this, "Producto guardado correctamente");
+            dispose();
 
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Verifica que los numeros sean validos");
-    }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Verifica que los numeros sean validos");
+        }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed

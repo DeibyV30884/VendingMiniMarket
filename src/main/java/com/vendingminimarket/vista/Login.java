@@ -12,13 +12,16 @@ import javax.swing.JOptionPane;
  */
 public class Login extends javax.swing.JFrame {
     
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Login.class.getName());
+    
 
     /**
      * Creates new form GestionMaquinas
      */
     public Login() {
         initComponents();
+        
     }
 
     /**
@@ -145,20 +148,39 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_contrasenaFieldActionPerformed
 
     private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
-        String email = correoField.getText();
-        String password = new String(contrasenaField.getText());
+        String email = correoField.getText().trim();
+        String password = contrasenaField.getText().trim();
 
-if (email.isEmpty() || password.isEmpty()) {
-    JOptionPane.showMessageDialog(this, "Por favor complete todos los campos");
-    return;
-}
+        if (email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor complete todos los campos");
+            return;
+        }
 
-if (email.equals("admin@vending.com") && password.equals("admin123")) {
-    new MenuPrincipal("Deiby Vargas", "Administrador").setVisible(true);
-    this.dispose();
-} else {
-    JOptionPane.showMessageDialog(this, "Credenciales incorrectas");
-}
+        try {
+            java.sql.Connection con = com.vendingminimarket.conexion.ConexionDB.getConexion();
+            java.sql.CallableStatement cs = con.prepareCall("{CALL SP_LOGIN(?, ?, ?, ?, ?)}");
+
+            cs.setString(1, email);
+            cs.setString(2, password);
+            cs.registerOutParameter(3, java.sql.Types.VARCHAR);
+            cs.registerOutParameter(4, java.sql.Types.VARCHAR);
+            cs.registerOutParameter(5, java.sql.Types.NUMERIC);
+
+            cs.execute();
+
+            String nombre = cs.getString(3);
+            String rol = cs.getString(4);
+            cs.close();
+
+            new MenuPrincipal(nombre, rol).setVisible(true);
+            this.dispose();
+
+        } catch (java.sql.SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error: " + e.getMessage(),
+                    "Acceso denegado",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnIngresarActionPerformed
 
     /**
