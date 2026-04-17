@@ -80,15 +80,6 @@ public class GestionProductos extends javax.swing.JFrame {
         return -1; // ninguno seleccionado
     }
 
-    private void configurarPermisos(int idRol) {
-        boolean esAdmin = (idRol == 1); // 1 = Administrador
-
-        btnNuevoProducto.setVisible(esAdmin);
-        btnNuevoProveedor.setVisible(esAdmin);
-        btnNuevaCategoria.setVisible(esAdmin);
-        btnEditar.setVisible(esAdmin);
-        btnEliminar.setVisible(esAdmin);
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
