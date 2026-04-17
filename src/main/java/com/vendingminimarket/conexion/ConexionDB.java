@@ -22,11 +22,24 @@ public class ConexionDB {
             if (conexion == null || conexion.isClosed()) {
                 Class.forName("oracle.jdbc.driver.OracleDriver");
                 conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
+                conexion.setAutoCommit(true); // siempre ve datos commiteados
                 System.out.println("Conexion exitosa a Oracle");
             }
         } catch (Exception e) {
             System.err.println("Error de conexion: " + e.getMessage());
         }
         return conexion;
+    }
+
+    // Método para forzar reconexión
+    public static void resetConexion() {
+        try {
+            if (conexion != null && !conexion.isClosed()) {
+                conexion.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error cerrando conexion: " + e.getMessage());
+        }
+        conexion = null;
     }
 }

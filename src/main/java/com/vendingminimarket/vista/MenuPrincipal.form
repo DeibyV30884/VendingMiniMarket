@@ -58,6 +58,10 @@
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="151" max="-2" attributes="0"/>
+                          <Component id="jLabel1" min="-2" pref="355" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="187" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="btnReportes" max="32767" attributes="0"/>
@@ -68,20 +72,13 @@
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="100" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblAlerta2" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblAlerta1" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="151" max="-2" attributes="0"/>
-                          <Component id="jLabel1" min="-2" pref="355" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jScrollPane1" min="-2" pref="434" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="161" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -101,14 +98,12 @@
                   <Component id="btnMaquinas" min="-2" pref="70" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnReportes" min="-2" pref="70" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="lblAlerta1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="46" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="lblAlerta2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="62" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -233,22 +228,6 @@
             <Property name="text" type="java.lang.String" value=" ALERTAS:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="lblAlerta1">
-          <Properties>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="----------"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="lblAlerta2">
-          <Properties>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="----------"/>
-          </Properties>
-        </Component>
         <Container class="javax.swing.JPanel" name="jPanel3">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -264,10 +243,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
-                      <Component id="lblRol" min="-2" pref="76" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
+                      <Component id="lblRol" min="-2" pref="525" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="15" max="32767" attributes="0"/>
                       <Component id="btnSalir" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                   </Group>
@@ -339,6 +318,21 @@
                     <EmptyBorder/>
                   </Border>
                 </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTextArea" name="jTextAreaAlertas">
+              <Properties>
+                <Property name="columns" type="int" value="20"/>
+                <Property name="rows" type="int" value="5"/>
               </Properties>
             </Component>
           </SubComponents>

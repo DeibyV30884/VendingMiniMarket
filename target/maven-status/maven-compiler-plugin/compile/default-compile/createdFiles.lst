@@ -2,6 +2,7 @@ com/vendingminimarket/vista/GestionPedidos.class
 com/vendingminimarket/vista/RecargarProducto$3.class
 com/vendingminimarket/vista/Login.class
 com/vendingminimarket/vista/GestionMaquinas$4.class
+com/vendingminimarket/vista/DialogNuevoProducto$9$1.class
 com/vendingminimarket/vista/DialogNuevaCategoria.class
 com/vendingminimarket/vista/NuevaMaquina$4.class
 com/vendingminimarket/vista/GestionPedidos$6.class
@@ -27,7 +28,6 @@ com/vendingminimarket/vendingminimarket/VendingMiniMarket.class
 com/vendingminimarket/vista/NuevaMaquina.class
 com/vendingminimarket/vista/RecargarProducto$8.class
 com/vendingminimarket/vista/DialogEditarProducto$5.class
-com/vendingminimarket/vista/DialogEditarProducto$11$1.class
 com/vendingminimarket/vista/AsignarProductoMaquina$3.class
 com/vendingminimarket/vista/GestionProductos$4.class
 com/vendingminimarket/vista/DialogNuevoProveedor$1.class
@@ -53,12 +53,12 @@ com/vendingminimarket/vista/DialogEditarProducto$3.class
 com/vendingminimarket/vista/DialogNuevaCategoria$1.class
 com/vendingminimarket/vista/GestionPedidos$4.class
 com/vendingminimarket/vista/MenuPrincipal.class
+com/vendingminimarket/vista/DialogEditarProducto$10$1.class
 com/vendingminimarket/vista/DialogNuevoProveedor$8.class
 com/vendingminimarket/vista/NuevoPedido$1.class
 com/vendingminimarket/vista/DialogNuevoProducto$4.class
 com/vendingminimarket/vista/MenuPrincipal$1.class
 com/vendingminimarket/vista/GestionProductos$5.class
-com/vendingminimarket/vista/DialogNuevoProducto$10.class
 com/vendingminimarket/vista/Login$2.class
 com/vendingminimarket/vista/DialogNuevoProveedor$6.class
 com/vendingminimarket/vista/DialogNuevoProducto$7.class
@@ -95,7 +95,6 @@ com/vendingminimarket/vista/RecargarProducto$1.class
 com/vendingminimarket/modelo/Usuario.class
 com/vendingminimarket/vista/DialogNuevoProveedor$8$1.class
 com/vendingminimarket/vista/GestionProductos$3.class
-com/vendingminimarket/vista/DialogNuevoProducto$10$1.class
 com/vendingminimarket/vista/AsignarProductoMaquina$4.class
 com/vendingminimarket/vista/DialogNuevaCategoria$5$1.class
 com/vendingminimarket/vista/DialogNuevoProducto$5.class
@@ -106,7 +105,6 @@ com/vendingminimarket/vista/RecargarProducto$6.class
 com/vendingminimarket/vista/AsignarProductoMaquina$5.class
 com/vendingminimarket/vista/GestionProductos$2.class
 com/vendingminimarket/vista/DialogEditarProducto$7.class
-com/vendingminimarket/vista/DialogEditarProducto$11.class
 com/vendingminimarket/vista/GestionProductos$9.class
 com/vendingminimarket/vista/DialogNuevoProveedor$5.class
 com/vendingminimarket/vista/NuevaMaquina$7.class

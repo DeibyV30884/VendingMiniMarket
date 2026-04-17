@@ -12,11 +12,82 @@ public class GestionProductos extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GestionProductos.class.getName());
 
+    private String rol;
+
     /**
      * Creates new form GestionProductos
      */
-    public GestionProductos() {
+    public GestionProductos(String rol) {
+        this.rol = rol;
         initComponents();
+        configurarPermisos();
+        cargarProductos();
+    }
+
+    private void configurarPermisos() {
+        boolean esAdmin = rol.equalsIgnoreCase("Administrador");
+        btnNuevoProducto.setVisible(esAdmin);
+        btnNuevoProveedor.setVisible(esAdmin);
+        btnNuevaCategoria.setVisible(esAdmin);
+        btnEditar.setVisible(esAdmin);
+        btnEliminar.setVisible(esAdmin);
+    }
+
+    private void cargarProductos() {
+        try {
+            // Fuerza conexión nueva cada vez
+            com.vendingminimarket.conexion.ConexionDB.resetConexion();
+            java.sql.Connection con = com.vendingminimarket.conexion.ConexionDB.getConexion();
+
+            java.sql.CallableStatement cs = con.prepareCall("{? = CALL FN_LISTAR_PRODUCTOS()}");
+            cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+            cs.execute();
+
+            java.sql.ResultSet rs = (java.sql.ResultSet) cs.getObject(1);
+            javax.swing.table.DefaultTableModel modelo
+                    = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            modelo.setRowCount(0);
+
+            while (rs.next()) {
+                modelo.addRow(new Object[]{
+                    rs.getInt("ID_PRODUCTO"),
+                    rs.getString("NOMBRE"),
+                    rs.getString("CATEGORIA"),
+                    rs.getString("PROVEEDOR"),
+                    rs.getInt("STOCK_BODEGA"),
+                    rs.getDouble("PRECIO_VENTA"),
+                    false
+                });
+            }
+            rs.close();
+            cs.close();
+
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error al cargar productos: " + e.getMessage(),
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private int getProductoSeleccionado() {
+        javax.swing.table.DefaultTableModel modelo
+                = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            if (Boolean.TRUE.equals(modelo.getValueAt(i, 6))) {
+                return (int) modelo.getValueAt(i, 0); // retorna el ID
+            }
+        }
+        return -1; // ninguno seleccionado
+    }
+
+    private void configurarPermisos(int idRol) {
+        boolean esAdmin = (idRol == 1); // 1 = Administrador
+
+        btnNuevoProducto.setVisible(esAdmin);
+        btnNuevoProveedor.setVisible(esAdmin);
+        btnNuevaCategoria.setVisible(esAdmin);
+        btnEditar.setVisible(esAdmin);
+        btnEliminar.setVisible(esAdmin);
     }
 
     /**
@@ -174,6 +245,8 @@ public class GestionProductos extends javax.swing.JFrame {
             }
         });
 
+        tblProductos.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -186,7 +259,7 @@ public class GestionProductos extends javax.swing.JFrame {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -293,7 +366,42 @@ public class GestionProductos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        // TODO add your handling code here:
+        String criterio = txtBuscar.getText().trim();
+        if (criterio.isEmpty()) {
+            cargarProductos(); // si está vacío muestra todos
+            return;
+        }
+        try {
+            java.sql.Connection con = com.vendingminimarket.conexion.ConexionDB.getConexion();
+            java.sql.CallableStatement cs = con.prepareCall("{? = CALL SP_BUSCAR_PRODUCTOS(?)}");
+            cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+            cs.setString(2, criterio);
+            cs.execute();
+
+            java.sql.ResultSet rs = (java.sql.ResultSet) cs.getObject(1);
+            javax.swing.table.DefaultTableModel modelo
+                    = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            modelo.setRowCount(0);
+
+            while (rs.next()) {
+                modelo.addRow(new Object[]{
+                    rs.getInt("ID_PRODUCTO"),
+                    rs.getString("NOMBRE"),
+                    rs.getString("CATEGORIA"),
+                    rs.getString("PROVEEDOR"),
+                    rs.getInt("STOCK_BODEGA"),
+                    rs.getDouble("PRECIO_VENTA"),
+                    false
+                });
+            }
+            rs.close();
+            cs.close();
+
+        } catch (java.sql.SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error en búsqueda: " + e.getMessage(),
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
@@ -307,7 +415,8 @@ public class GestionProductos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnNuevoProductoActionPerformed
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
-        // TODO add your handling code here:
+        txtBuscar.setText("");
+        cargarProductos();
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
@@ -328,11 +437,50 @@ public class GestionProductos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnNuevaCategoriaActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        // TODO add your handling code here:
+        int id = getProductoSeleccionado();
+        if (id == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Seleccione un producto primero.",
+                    "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+                "¿Está seguro de eliminar este producto?",
+                "Confirmar eliminación",
+                javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                java.sql.Connection con = com.vendingminimarket.conexion.ConexionDB.getConexion();
+                java.sql.CallableStatement cs = con.prepareCall("{CALL SP_ELIMINAR_PRODUCTO(?)}");
+                cs.setInt(1, id);
+                cs.execute();
+                cs.close();
+
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Producto eliminado correctamente.");
+                cargarProductos(); // refresca la tabla
+
+            } catch (java.sql.SQLException e) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Error: " + e.getMessage(),
+                        "Error al eliminar", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-        // TODO add your handling code here:
+        int id = getProductoSeleccionado();
+        if (id == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Seleccione un producto primero.",
+                    "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        DialogEditarProducto dialog = new DialogEditarProducto(this, true, id);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+        cargarProductos(); // refresca la tabla al cerrar el dialog
     }//GEN-LAST:event_btnEditarActionPerformed
 
     /**
@@ -357,7 +505,7 @@ public class GestionProductos extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new GestionProductos().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new GestionProductos("").setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
