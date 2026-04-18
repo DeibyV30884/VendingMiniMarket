@@ -13,10 +13,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuPrincipal.class.getName());
     
     private String rol;
+    private String nombre;
     /**
      * Creates new form MenuPrincipal
      */
     public MenuPrincipal(String nombre, String rol) {
+        this.nombre = nombre;
         this.rol = rol;
         initComponents();
         inicializarPantalla(nombre, rol);
@@ -255,7 +257,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnReportesActionPerformed
 
     private void btnProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductosActionPerformed
-        new GestionProductos(rol).setVisible(true);
+        new GestionProductos(nombre, rol).setVisible(true);
         this.dispose();        // TODO add your handling code here:
     }//GEN-LAST:event_btnProductosActionPerformed
 

@@ -12,12 +12,14 @@ public class GestionProductos extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GestionProductos.class.getName());
 
+    private String nombre;
     private String rol;
 
     /**
      * Creates new form GestionProductos
      */
-    public GestionProductos(String rol) {
+    public GestionProductos(String nombre, String rol) {
+        this.nombre = nombre;
         this.rol = rol;
         initComponents();
         configurarPermisos();
@@ -411,7 +413,7 @@ public class GestionProductos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        new MenuPrincipal("", "").setVisible(true);
+        new MenuPrincipal(nombre, rol).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
 
@@ -496,7 +498,7 @@ public class GestionProductos extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new GestionProductos("").setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new GestionProductos("", "").setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
