@@ -4,18 +4,70 @@
  */
 package com.vendingminimarket.vista;
 
-/**
- *
- * @author Brandon
- */
-public class RecargarProducto extends javax.swing.JFrame {
+import com.vendingminimarket.conexion.ConexionDB;
+import java.sql.CallableStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
+public class RecargarProducto extends javax.swing.JDialog {
+
+    private int idMaquina;
+    private int idProducto;
+    private int idUsuario;
 
     /**
      * Creates new form RecargarProducto
      */
-    public RecargarProducto() {
+    public RecargarProducto(java.awt.Frame parent, boolean modal,
+            int idMaquina, int idProducto, int idUsuario) {
+        super(parent, modal);
+        this.idMaquina = idMaquina;
+        this.idProducto = idProducto;
+        this.idUsuario = idUsuario;
         initComponents();
+        bloquearCamposInformativos();
+        cargarDatosRecarga();
     }
+
+    // Los campos informativos no se editan, solo los lee de la BD
+    private void bloquearCamposInformativos() {
+        txtmaquina.setEditable(false);
+        txtProducto.setEditable(false);
+        txtBodega.setEditable(false);
+        txtStokMaquina.setEditable(false);
+    }
+
+    // Llama FN_CUR_DATOS_RECARGA y rellena los campos del diálogo
+    private void cargarDatosRecarga() {
+        try {
+            CallableStatement cs = ConexionDB.getConexion()
+                    .prepareCall("{? = CALL FN_CUR_DATOS_RECARGA(?, ?)}");
+            cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+            cs.setInt(2, idMaquina);
+            cs.setInt(3, idProducto);
+            cs.execute();
+
+            ResultSet rs = (ResultSet) cs.getObject(1);
+            if (rs.next()) {
+                txtmaquina.setText(rs.getString("CODIGO_MAQUINA"));
+                txtProducto.setText(rs.getString("NOMBRE"));
+                txtBodega.setText(String.valueOf(rs.getInt("STOCK_BODEGA")));
+                txtStokMaquina.setText(String.valueOf(rs.getInt("STOCK_ACTUAL")));
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "No se encontraron datos para ese producto y máquina.");
+                dispose();
+            }
+            rs.close();
+            cs.close();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al cargar datos: " + e.getMessage());
+        }
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -30,19 +82,17 @@ public class RecargarProducto extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
+        txtBodega = new javax.swing.JTextField();
         bntCancelar = new javax.swing.JButton();
         btnAsignar = new javax.swing.JButton();
-        txtBuscar1 = new javax.swing.JTextField();
-        txtBuscar2 = new javax.swing.JTextField();
-        txtBuscar3 = new javax.swing.JTextField();
+        txtProducto = new javax.swing.JTextField();
+        txtmaquina = new javax.swing.JTextField();
+        txtStokMaquina = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        txtBuscar4 = new javax.swing.JTextField();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        txtCantidadRecarga = new javax.swing.JTextField();
 
         jPanel1.setBackground(new java.awt.Color(200, 216, 168));
 
@@ -76,10 +126,10 @@ public class RecargarProducto extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Maquina");
 
-        txtBuscar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar.addActionListener(new java.awt.event.ActionListener() {
+        txtBodega.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
+        txtBodega.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscarActionPerformed(evt);
+                txtBodegaActionPerformed(evt);
             }
         });
 
@@ -105,24 +155,24 @@ public class RecargarProducto extends javax.swing.JFrame {
             }
         });
 
-        txtBuscar1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar1.addActionListener(new java.awt.event.ActionListener() {
+        txtProducto.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
+        txtProducto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscar1ActionPerformed(evt);
+                txtProductoActionPerformed(evt);
             }
         });
 
-        txtBuscar2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar2.addActionListener(new java.awt.event.ActionListener() {
+        txtmaquina.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
+        txtmaquina.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscar2ActionPerformed(evt);
+                txtmaquinaActionPerformed(evt);
             }
         });
 
-        txtBuscar3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar3.addActionListener(new java.awt.event.ActionListener() {
+        txtStokMaquina.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
+        txtStokMaquina.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscar3ActionPerformed(evt);
+                txtStokMaquinaActionPerformed(evt);
             }
         });
 
@@ -146,10 +196,10 @@ public class RecargarProducto extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Stock de Maquina");
 
-        txtBuscar4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar4.addActionListener(new java.awt.event.ActionListener() {
+        txtCantidadRecarga.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
+        txtCantidadRecarga.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscar4ActionPerformed(evt);
+                txtCantidadRecargaActionPerformed(evt);
             }
         });
 
@@ -168,8 +218,8 @@ public class RecargarProducto extends javax.swing.JFrame {
                                 .addGap(38, 38, 38)
                                 .addComponent(bntCancelar))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(txtBuscar3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                                .addComponent(txtBuscar, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addComponent(txtStokMaquina, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                                .addComponent(txtBodega, javax.swing.GroupLayout.Alignment.LEADING))
                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -177,10 +227,10 @@ public class RecargarProducto extends javax.swing.JFrame {
                             .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtBuscar4, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtBuscar2, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCantidadRecarga, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtmaquina, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(txtBuscar1, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtProducto, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
@@ -191,23 +241,23 @@ public class RecargarProducto extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtBuscar2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtmaquina, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtBuscar1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtBodega, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtBuscar3, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtStokMaquina, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtBuscar4, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtCantidadRecarga, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bntCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -231,43 +281,94 @@ public class RecargarProducto extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtBuscar4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscar4ActionPerformed
+    private void txtCantidadRecargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadRecargaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscar4ActionPerformed
+    }//GEN-LAST:event_txtCantidadRecargaActionPerformed
 
-    private void txtBuscar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscar3ActionPerformed
+    private void txtStokMaquinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtStokMaquinaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscar3ActionPerformed
+    }//GEN-LAST:event_txtStokMaquinaActionPerformed
 
-    private void txtBuscar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscar2ActionPerformed
+    private void txtmaquinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtmaquinaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscar2ActionPerformed
+    }//GEN-LAST:event_txtmaquinaActionPerformed
 
-    private void txtBuscar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscar1ActionPerformed
+    private void txtProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProductoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscar1ActionPerformed
+    }//GEN-LAST:event_txtProductoActionPerformed
 
     private void btnAsignarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsignarActionPerformed
-        // TODO add your handling code here:
+        String cantStr = txtCantidadRecarga.getText().trim();
+
+        if (cantStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Ingrese la cantidad a recargar.");
+            return;
+        }
+
+        int cantidad;
+        try {
+            cantidad = Integer.parseInt(cantStr);
+            if (cantidad <= 0) {
+                JOptionPane.showMessageDialog(this,
+                        "La cantidad debe ser mayor a cero.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Cantidad inválida.");
+            return;
+        }
+
+        try {
+            CallableStatement cs = ConexionDB.getConexion()
+                    .prepareCall("{CALL SP_RECARGAR_PRODUCTO(?, ?, ?, ?)}");
+            cs.setInt(1, idMaquina);
+            cs.setInt(2, idProducto);
+            cs.setInt(3, cantidad);
+            cs.setInt(4, idUsuario);
+            cs.execute();
+            cs.close();
+
+            JOptionPane.showMessageDialog(this,
+                    "Recarga realizada correctamente.");
+            dispose();
+
+        } catch (SQLException e) {
+            // Extraer solo el primer mensaje limpio sin la cadena ORA técnica
+            String msg = e.getMessage();
+            if (msg != null && msg.contains("ORA-20")) {
+                // Se toma solo la parte del mensaje de negocio
+                int inicio = msg.indexOf("ORA-20");
+                String parte = msg.substring(inicio);
+                // Quitar todo lo que venga después del primer salto de línea
+                int fin = parte.indexOf("\n");
+                if (fin != -1) {
+                    parte = parte.substring(0, fin);
+                }
+                // Aqui se quita el código ORA-20XXX: del inicio
+                int dosPuntos = parte.indexOf(": ");
+                if (dosPuntos != -1) {
+                    parte = parte.substring(dosPuntos + 2);
+                }
+                JOptionPane.showMessageDialog(this, parte);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al recargar: " + msg);
+            }
+        }
     }//GEN-LAST:event_btnAsignarActionPerformed
 
     private void bntCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntCancelarActionPerformed
-        // TODO add your handling code here:
+        dispose();
     }//GEN-LAST:event_bntCancelarActionPerformed
 
-    private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
+    private void txtBodegaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBodegaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscarActionPerformed
+    }//GEN-LAST:event_txtBodegaActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -275,23 +376,15 @@ public class RecargarProducto extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RecargarProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RecargarProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RecargarProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RecargarProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException
+                | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(RecargarProducto.class.getName())
+                    .log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new RecargarProducto().setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(()
+                -> new RecargarProducto(null, true, 0, 0, 0).setVisible(true)
+        );
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -305,10 +398,10 @@ public class RecargarProducto extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField txtBuscar;
-    private javax.swing.JTextField txtBuscar1;
-    private javax.swing.JTextField txtBuscar2;
-    private javax.swing.JTextField txtBuscar3;
-    private javax.swing.JTextField txtBuscar4;
+    private javax.swing.JTextField txtBodega;
+    private javax.swing.JTextField txtCantidadRecarga;
+    private javax.swing.JTextField txtProducto;
+    private javax.swing.JTextField txtStokMaquina;
+    private javax.swing.JTextField txtmaquina;
     // End of variables declaration//GEN-END:variables
 }

@@ -27,7 +27,7 @@
     </Component>
   </NonVisualComponents>
   <Properties>
-    <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="defaultCloseOperation" type="int" value="2"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -48,7 +48,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jPanel1" alignment="0" pref="321" max="32767" attributes="0"/>
+          <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -83,7 +83,7 @@
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
                               <Component id="jLabel5" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
@@ -91,10 +91,10 @@
                                   <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
                                   <Component id="bntCancelar" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="txtBuscar3" alignment="0" max="32767" attributes="0"/>
-                              <Component id="txtBuscar" alignment="0" max="32767" attributes="0"/>
-                              <Component id="txtBuscar1" alignment="0" max="32767" attributes="0"/>
-                              <Component id="txtBuscar2" alignment="0" max="32767" attributes="0"/>
+                              <Component id="txtCapacidadMaxima" alignment="0" max="32767" attributes="0"/>
+                              <Component id="txtUbicacion" alignment="0" max="32767" attributes="0"/>
+                              <Component id="txtCodigoM" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jcbEstado" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -109,20 +109,20 @@
                   <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" pref="38" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="txtBuscar2" min="-2" pref="29" max="-2" attributes="0"/>
+                  <Component id="txtCodigoM" min="-2" pref="29" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jLabel6" min="-2" pref="38" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txtBuscar1" min="-2" pref="29" max="-2" attributes="0"/>
+                  <Component id="txtUbicacion" min="-2" pref="29" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="jLabel4" min="-2" pref="38" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="txtBuscar" min="-2" pref="29" max="-2" attributes="0"/>
+                  <Component id="txtCapacidadMaxima" min="-2" pref="29" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                   <Component id="jLabel5" min="-2" pref="38" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                  <Component id="txtBuscar3" min="-2" pref="29" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="jcbEstado" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btnGuardar" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                       <Component id="bntCancelar" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
@@ -194,7 +194,7 @@
             <Property name="text" type="java.lang.String" value="Codigo de Maquina"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtBuscar">
+        <Component class="javax.swing.JTextField" name="txtCapacidadMaxima">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -205,7 +205,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtBuscarActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtCapacidadMaximaActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="bntCancelar">
@@ -238,7 +238,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGuardarActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtBuscar1">
+        <Component class="javax.swing.JTextField" name="txtUbicacion">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -249,10 +249,10 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtBuscar1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtUbicacionActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="txtBuscar2">
+        <Component class="javax.swing.JTextField" name="txtCodigoM">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -263,21 +263,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtBuscar2ActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtBuscar3">
-          <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
-                <LineBorder roundedCorners="true" thickness="2">
-                  <Color PropertyName="color" blue="6b" green="7a" red="3d" type="rgb"/>
-                </LineBorder>
-              </Border>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtBuscar3ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtCodigoMActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
@@ -321,6 +307,21 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Ubicacion"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="jcbEstado">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="4">
+                <StringItem index="0" value="Item 1"/>
+                <StringItem index="1" value="Item 2"/>
+                <StringItem index="2" value="Item 3"/>
+                <StringItem index="3" value="Item 4"/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

@@ -4,17 +4,45 @@
  */
 package com.vendingminimarket.vista;
 
+import com.vendingminimarket.conexion.ConexionDB;
+import java.sql.CallableStatement;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Brandon
  */
-public class NuevaMaquina extends javax.swing.JFrame {
+public class NuevaMaquina extends javax.swing.JDialog {
 
     /**
      * Creates new form NuevaMaquina
      */
-    public NuevaMaquina() {
+    public NuevaMaquina(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
+        cargarEstados();
+    }
+
+    private void cargarEstados() {
+        try {
+            CallableStatement cs = ConexionDB.getConexion()
+                    .prepareCall("{? = CALL FN_LISTAR_ESTADOS_MAQUINA()}");
+            cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+            cs.execute();
+
+            java.sql.ResultSet rs = (java.sql.ResultSet) cs.getObject(1);
+            jcbEstado.removeAllItems();
+            while (rs.next()) {
+                jcbEstado.addItem(rs.getString("ESTADO"));
+            }
+            rs.close();
+            cs.close();
+
+        } catch (java.sql.SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error cargando estados: " + e.getMessage());
+        }
     }
 
     /**
@@ -32,15 +60,15 @@ public class NuevaMaquina extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
+        txtCapacidadMaxima = new javax.swing.JTextField();
         bntCancelar = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
-        txtBuscar1 = new javax.swing.JTextField();
-        txtBuscar2 = new javax.swing.JTextField();
-        txtBuscar3 = new javax.swing.JTextField();
+        txtUbicacion = new javax.swing.JTextField();
+        txtCodigoM = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jcbEstado = new javax.swing.JComboBox<>();
 
         jMenu1.setText("jMenu1");
 
@@ -49,7 +77,7 @@ public class NuevaMaquina extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Buscar:");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(200, 216, 168));
 
@@ -83,10 +111,10 @@ public class NuevaMaquina extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Codigo de Maquina");
 
-        txtBuscar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar.addActionListener(new java.awt.event.ActionListener() {
+        txtCapacidadMaxima.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
+        txtCapacidadMaxima.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscarActionPerformed(evt);
+                txtCapacidadMaximaActionPerformed(evt);
             }
         });
 
@@ -110,24 +138,17 @@ public class NuevaMaquina extends javax.swing.JFrame {
             }
         });
 
-        txtBuscar1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar1.addActionListener(new java.awt.event.ActionListener() {
+        txtUbicacion.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
+        txtUbicacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscar1ActionPerformed(evt);
+                txtUbicacionActionPerformed(evt);
             }
         });
 
-        txtBuscar2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar2.addActionListener(new java.awt.event.ActionListener() {
+        txtCodigoM.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
+        txtCodigoM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscar2ActionPerformed(evt);
-            }
-        });
-
-        txtBuscar3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscar3ActionPerformed(evt);
+                txtCodigoMActionPerformed(evt);
             }
         });
 
@@ -145,6 +166,8 @@ public class NuevaMaquina extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Ubicacion");
+
+        jcbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -167,10 +190,10 @@ public class NuevaMaquina extends javax.swing.JFrame {
                                 .addComponent(btnGuardar)
                                 .addGap(61, 61, 61)
                                 .addComponent(bntCancelar))
-                            .addComponent(txtBuscar3, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtBuscar, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtBuscar1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtBuscar2, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(txtCapacidadMaxima, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtUbicacion, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtCodigoM, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jcbEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -180,20 +203,20 @@ public class NuevaMaquina extends javax.swing.JFrame {
                 .addGap(26, 26, 26)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtBuscar2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtCodigoM, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtBuscar1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtUbicacion, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtCapacidadMaxima, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14)
-                .addComponent(txtBuscar3, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jcbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bntCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -204,7 +227,7 @@ public class NuevaMaquina extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -216,29 +239,64 @@ public class NuevaMaquina extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
+    private void txtCapacidadMaximaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCapacidadMaximaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscarActionPerformed
+    }//GEN-LAST:event_txtCapacidadMaximaActionPerformed
 
     private void bntCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntCancelarActionPerformed
-        // TODO add your handling code here:
+        dispose();
     }//GEN-LAST:event_bntCancelarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // TODO add your handling code here:
+        String codigo = txtCodigoM.getText().trim();
+        String ubicacion = txtUbicacion.getText().trim();
+        String capacidad = txtCapacidadMaxima.getText().trim();
+        String estado    = (String) jcbEstado.getSelectedItem();
+
+        if (codigo.isEmpty() || ubicacion.isEmpty()
+                || capacidad.isEmpty() || estado.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Todos los campos son obligatorios.");
+            return;
+        }
+
+        try {
+            int cap = Integer.parseInt(capacidad);
+            if (cap <= 0) {
+                JOptionPane.showMessageDialog(this,
+                        "La capacidad debe ser mayor a cero.");
+                return;
+            }
+
+            CallableStatement cs = ConexionDB.getConexion()
+                    .prepareCall("{CALL SP_INSERTAR_MAQUINA(?, ?, ?, ?)}");
+            cs.setString(1, codigo);
+            cs.setString(2, ubicacion);
+            cs.setInt(3, cap);
+            cs.setString(4, estado);
+            cs.execute();
+            cs.close();
+
+            JOptionPane.showMessageDialog(this,
+                    "Máquina guardada correctamente.");
+            dispose();
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "La capacidad debe ser un número entero.");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
-    private void txtBuscar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscar1ActionPerformed
+    private void txtUbicacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUbicacionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscar1ActionPerformed
+    }//GEN-LAST:event_txtUbicacionActionPerformed
 
-    private void txtBuscar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscar2ActionPerformed
+    private void txtCodigoMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoMActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscar2ActionPerformed
-
-    private void txtBuscar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscar3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscar3ActionPerformed
+    }//GEN-LAST:event_txtCodigoMActionPerformed
 
     /**
      * @param args the command line arguments
@@ -270,7 +328,7 @@ public class NuevaMaquina extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new NuevaMaquina().setVisible(true);
+                new NuevaMaquina(null, true).setVisible(true);
             }
         });
     }
@@ -287,9 +345,9 @@ public class NuevaMaquina extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField txtBuscar;
-    private javax.swing.JTextField txtBuscar1;
-    private javax.swing.JTextField txtBuscar2;
-    private javax.swing.JTextField txtBuscar3;
+    private javax.swing.JComboBox<String> jcbEstado;
+    private javax.swing.JTextField txtCapacidadMaxima;
+    private javax.swing.JTextField txtCodigoM;
+    private javax.swing.JTextField txtUbicacion;
     // End of variables declaration//GEN-END:variables
 }

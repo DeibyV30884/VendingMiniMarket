@@ -4,19 +4,94 @@
  */
 package com.vendingminimarket.vista;
 
-/**
- *
- * @author yarie
- */
-public class NuevoPedido extends javax.swing.JFrame {
-    
+import com.vendingminimarket.conexion.ConexionDB;
+import java.sql.CallableStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+
+public class NuevoPedido extends javax.swing.JDialog {
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(NuevoPedido.class.getName());
+
+    private int idUsuario;
+    private int idPedidoActual = -1;
 
     /**
      * Creates new form NuevoPedido
      */
-    public NuevoPedido() {
+    public NuevoPedido(java.awt.Frame parent, boolean modal, int idUsuario) {
+        super(parent, modal);
+        this.idUsuario = idUsuario;
         initComponents();
+        cargarProveedores();
+        ((DefaultTableModel) jTable3.getModel()).setRowCount(0);
+        txtTotal.setText("0.00");
+    }
+
+    private void cargarProveedores() {
+        try {
+            CallableStatement cs = ConexionDB.getConexion()
+                    .prepareCall("{? = CALL FN_LISTAR_PROVEEDORES()}");
+            cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+            cs.execute();
+            ResultSet rs = (ResultSet) cs.getObject(1);
+            JcbProveedor.removeAllItems();
+            while (rs.next()) {
+                JcbProveedor.addItem(
+                        rs.getInt("ID_PROVEEDOR") + " - " + rs.getString("NOMBRE"));
+            }
+            rs.close();
+            cs.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error cargando proveedores: " + e.getMessage());
+        }
+    }
+
+    // Carga el combo de proveedores
+    private void cargarProductosDisponibles(int idProveedor) {
+        try {
+            CallableStatement cs = ConexionDB.getConexion().prepareCall("{? = CALL PKG_PEDIDO.FN_LISTAR_PRODUCTOS_PROVEEDOR(?)}");
+            cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+            cs.setInt(2, idProveedor);
+            cs.execute();
+            ResultSet rs = (ResultSet) cs.getObject(1);
+            jcbProducto.removeAllItems();
+            while (rs.next()) {
+                jcbProducto.addItem(
+                        rs.getInt("ID_PRODUCTO") + " - "
+                        + rs.getString("NOMBRE") + " | ₡"
+                        + rs.getDouble("PRECIO_VENTA"));
+            }
+            rs.close();
+            cs.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error cargando productos: " + e.getMessage());
+        }
+    }
+
+    // Total viene de la BD, calculado por TRG_TOTAL_PEDIDO
+    private void actualizarTotal() {
+        if (idPedidoActual == -1) {
+            txtTotal.setText("0.00");
+            return;
+        }
+        try {
+            CallableStatement cs = ConexionDB.getConexion().prepareCall("{? = CALL PKG_PEDIDO.FN_OBTENER_TOTAL_PEDIDO(?)}");
+            cs.registerOutParameter(1, java.sql.Types.NUMERIC);
+            cs.setInt(2, idPedidoActual);
+            cs.execute();
+            double total = cs.getDouble(1);
+            cs.close();
+            txtTotal.setText(String.format("%.2f", total));
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al obtener total: " + e.getMessage());
+        }
     }
 
     /**
@@ -29,53 +104,36 @@ public class NuevoPedido extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
-        btnCancelar1 = new javax.swing.JButton();
-        btnGuardar1 = new javax.swing.JButton();
-        txtBuscar8 = new javax.swing.JTextField();
+        btnCrearPedido = new javax.swing.JButton();
         jLabel15 = new javax.swing.JLabel();
-        txtBuscar9 = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
         btnCancelar = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
-        btnGuardar3 = new javax.swing.JButton();
-        txtBuscar10 = new javax.swing.JTextField();
+        btnAgregar = new javax.swing.JButton();
+        txtCantidad = new javax.swing.JTextField();
+        JcbProveedor = new javax.swing.JComboBox<>();
+        jcbProducto = new javax.swing.JComboBox<>();
+        txtTotal = new javax.swing.JTextField();
+        jLabel21 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel2.setBackground(new java.awt.Color(200, 216, 168));
+        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        btnCancelar1.setBackground(new java.awt.Color(255, 255, 255));
-        btnCancelar1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        btnCancelar1.setForeground(new java.awt.Color(61, 122, 107));
-        btnCancelar1.setText("Crear Pedido");
-        btnCancelar1.setBorderPainted(false);
-        btnCancelar1.addActionListener(new java.awt.event.ActionListener() {
+        btnCrearPedido.setBackground(new java.awt.Color(255, 255, 255));
+        btnCrearPedido.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        btnCrearPedido.setForeground(new java.awt.Color(61, 122, 107));
+        btnCrearPedido.setText("Crear Pedido");
+        btnCrearPedido.setBorderPainted(false);
+        btnCrearPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelar1ActionPerformed(evt);
-            }
-        });
-
-        btnGuardar1.setBackground(new java.awt.Color(255, 255, 255));
-        btnGuardar1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        btnGuardar1.setForeground(new java.awt.Color(61, 122, 107));
-        btnGuardar1.setText("Buscar");
-        btnGuardar1.setBorderPainted(false);
-        btnGuardar1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardar1ActionPerformed(evt);
-            }
-        });
-
-        txtBuscar8.setBackground(new java.awt.Color(255, 255, 255));
-        txtBuscar8.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscar8ActionPerformed(evt);
+                btnCrearPedidoActionPerformed(evt);
             }
         });
 
@@ -83,14 +141,6 @@ public class NuevoPedido extends javax.swing.JFrame {
         jLabel15.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         jLabel15.setForeground(new java.awt.Color(255, 255, 255));
         jLabel15.setText("Productos");
-
-        txtBuscar9.setBackground(new java.awt.Color(255, 255, 255));
-        txtBuscar9.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscar9ActionPerformed(evt);
-            }
-        });
 
         jLabel18.setBackground(new java.awt.Color(61, 122, 107));
         jLabel18.setFont(new java.awt.Font("Arial", 1, 22)); // NOI18N
@@ -100,7 +150,7 @@ public class NuevoPedido extends javax.swing.JFrame {
         jLabel20.setBackground(new java.awt.Color(61, 122, 107));
         jLabel20.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         jLabel20.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel20.setText("Cantidad");
+        jLabel20.setText("Total:");
 
         jLabel22.setBackground(new java.awt.Color(61, 122, 107));
         jLabel22.setFont(new java.awt.Font("Arial", 1, 22)); // NOI18N
@@ -121,20 +171,20 @@ public class NuevoPedido extends javax.swing.JFrame {
         jTable3.setBackground(new java.awt.Color(255, 255, 255));
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Producto", "Cantidad", "Precio Unit", "Subtotal"
+                "ID", "Producto", "Cantidad", "Precio Unit", "Subtotal"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -148,24 +198,46 @@ public class NuevoPedido extends javax.swing.JFrame {
         jTable3.setSelectionBackground(new java.awt.Color(255, 255, 255));
         jScrollPane3.setViewportView(jTable3);
 
-        btnGuardar3.setBackground(new java.awt.Color(255, 255, 255));
-        btnGuardar3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        btnGuardar3.setForeground(new java.awt.Color(61, 122, 107));
-        btnGuardar3.setText("+ Agregar");
-        btnGuardar3.setBorderPainted(false);
-        btnGuardar3.addActionListener(new java.awt.event.ActionListener() {
+        btnAgregar.setBackground(new java.awt.Color(255, 255, 255));
+        btnAgregar.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        btnAgregar.setForeground(new java.awt.Color(61, 122, 107));
+        btnAgregar.setText("+ Agregar");
+        btnAgregar.setBorderPainted(false);
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardar3ActionPerformed(evt);
+                btnAgregarActionPerformed(evt);
             }
         });
 
-        txtBuscar10.setBackground(new java.awt.Color(255, 255, 255));
-        txtBuscar10.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
-        txtBuscar10.addActionListener(new java.awt.event.ActionListener() {
+        txtCantidad.setBackground(new java.awt.Color(255, 255, 255));
+        txtCantidad.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
+        txtCantidad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscar10ActionPerformed(evt);
+                txtCantidadActionPerformed(evt);
             }
         });
+
+        JcbProveedor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        JcbProveedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JcbProveedorActionPerformed(evt);
+            }
+        });
+
+        jcbProducto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        txtTotal.setBackground(new java.awt.Color(255, 255, 255));
+        txtTotal.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(61, 122, 107), 2, true));
+        txtTotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTotalActionPerformed(evt);
+            }
+        });
+
+        jLabel21.setBackground(new java.awt.Color(61, 122, 107));
+        jLabel21.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        jLabel21.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel21.setText("Cantidad");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -173,27 +245,30 @@ public class NuevoPedido extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(JcbProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel15)
                         .addGap(18, 18, 18)
-                        .addComponent(txtBuscar9, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29)
-                        .addComponent(btnGuardar1)
-                        .addGap(32, 32, 32)
-                        .addComponent(jLabel20)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBuscar10, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jcbProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(73, 73, 73)
+                        .addComponent(jLabel21)
                         .addGap(18, 18, 18)
-                        .addComponent(btnGuardar3))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnCancelar1)
-                        .addGap(33, 33, 33)
-                        .addComponent(btnCancelar))
+                        .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnAgregar))
                     .addComponent(jLabel18)
                     .addComponent(jLabel22)
-                    .addComponent(txtBuscar8, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane3))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                            .addComponent(btnCrearPedido)
+                            .addGap(33, 33, 33)
+                            .addComponent(btnCancelar)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel20)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 768, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -201,24 +276,25 @@ public class NuevoPedido extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtBuscar8, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(JcbProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(4, 4, 4)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnGuardar1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar9, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar10, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnGuardar3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcbProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(38, 38, 38)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCancelar1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCrearPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(45, Short.MAX_VALUE))
         );
 
@@ -266,33 +342,148 @@ public class NuevoPedido extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtBuscar9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscar9ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscar9ActionPerformed
-
-    private void txtBuscar8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscar8ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscar8ActionPerformed
-
-    private void btnGuardar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardar1ActionPerformed
-
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
+        // Si hay borrador sin confirmar, cancelarlo en la BD
+        if (idPedidoActual != -1) {
+            try {
+                CallableStatement cs = ConexionDB.getConexion().prepareCall("{CALL PKG_PEDIDO.SP_CANCELAR_PEDIDO(?)}");
+                cs.setInt(1, idPedidoActual);
+                cs.execute();
+                cs.close();
+            } catch (SQLException e) {
+                logger.log(java.util.logging.Level.WARNING,
+                        "No se pudo cancelar pedido borrador", e);
+            }
+        }
+        dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void btnGuardar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardar3ActionPerformed
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        if (idPedidoActual == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un proveedor primero.");
+            return;
+        }
 
-    private void txtBuscar10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscar10ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscar10ActionPerformed
+        String itemProducto = (String) jcbProducto.getSelectedItem();
+        if (itemProducto == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione un producto.");
+            return;
+        }
 
-    private void btnCancelar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar1ActionPerformed
+        String cantidadStr = txtCantidad.getText().trim();
+        if (cantidadStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingrese una cantidad.");
+            return;
+        }
+
+        try {
+            int cantidad = Integer.parseInt(cantidadStr);
+            if (cantidad <= 0) {
+                JOptionPane.showMessageDialog(this, "La cantidad debe ser mayor a cero.");
+                return;
+            }
+
+            // Parsear combo "ID - Nombre | ₡Precio"
+            String[] partes = itemProducto.split(" - ");
+            int idProducto = Integer.parseInt(partes[0]);
+            String[] nombrePrecio = partes[1].split(" \\| ₡");
+            String nombreProducto = nombrePrecio[0];
+            double precio = Double.parseDouble(nombrePrecio[1]);
+
+            // SP inserta detalle, TRG_SUBTOTAL_DETALLE calcula subtotal,
+            // TRG_TOTAL_PEDIDO actualiza el total del encabezado
+            CallableStatement cs = ConexionDB.getConexion().prepareCall("{CALL PKG_PEDIDO.SP_AGREGAR_DETALLE_PEDIDO(?, ?, ?, ?)}");
+            cs.setInt(1, idPedidoActual);
+            cs.setInt(2, idProducto);
+            cs.setInt(3, cantidad);
+            cs.setDouble(4, precio);
+            cs.execute();
+            cs.close();
+
+            // Agregar fila visual a la tabla
+            DefaultTableModel modelo = (DefaultTableModel) jTable3.getModel();
+            modelo.addRow(new Object[]{
+                idProducto,
+                nombreProducto,
+                cantidad,
+                precio,
+                cantidad * precio // visual solamente, el real lo calcula el trigger
+            });
+
+            // Leer total real calculado por el trigger desde la BD
+            actualizarTotal();
+            txtCantidad.setText("");
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Cantidad inválida.");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al agregar producto: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnCancelar1ActionPerformed
+    }//GEN-LAST:event_txtCantidadActionPerformed
+
+    private void btnCrearPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearPedidoActionPerformed
+        if (idPedidoActual == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un proveedor primero.");
+            return;
+        }
+
+        DefaultTableModel modelo = (DefaultTableModel) jTable3.getModel();
+        if (modelo.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Agregue al menos un producto al pedido.");
+            return;
+        }
+
+        // El pedido ya está en BD con todos sus detalles, solo confirmar
+        JOptionPane.showMessageDialog(this,
+                "Pedido #" + idPedidoActual + " creado correctamente.");
+        idPedidoActual = -1; // marcar como confirmado para que cancelar no lo borre
+        dispose();
+    }//GEN-LAST:event_btnCrearPedidoActionPerformed
+
+    private void JcbProveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcbProveedorActionPerformed
+        String itemProv = (String) JcbProveedor.getSelectedItem();
+        if (itemProv == null) {
+            return;
+        }
+
+        int idProveedor = Integer.parseInt(itemProv.split(" - ")[0]);
+
+        // Cargar productos de ese proveedor
+        cargarProductosDisponibles(idProveedor);
+
+        try {
+            if (idPedidoActual != -1) {
+                CallableStatement csCancelar = ConexionDB.getConexion().prepareCall("{CALL PKG_PEDIDO.SP_CANCELAR_PEDIDO(?)}");
+                csCancelar.setInt(1, idPedidoActual);
+                csCancelar.execute();
+                csCancelar.close();
+                ((DefaultTableModel) jTable3.getModel()).setRowCount(0);
+                txtTotal.setText("0.00");
+            }
+
+            CallableStatement cs = ConexionDB.getConexion().prepareCall("{CALL PKG_PEDIDO.SP_CREAR_PEDIDO(?, ?, ?)}");
+            cs.setInt(1, idProveedor);
+            cs.setInt(2, idUsuario);
+            cs.registerOutParameter(3, java.sql.Types.NUMERIC);
+            cs.execute();
+            idPedidoActual = cs.getInt(3);
+            cs.close();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al inicializar pedido: " + e.getMessage());
+        }
+    }//GEN-LAST:event_JcbProveedorActionPerformed
+
+    private void txtTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTotalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTotalActionPerformed
 
     /**
      * @param args the command line arguments
@@ -316,25 +507,26 @@ public class NuevoPedido extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new NuevoPedido().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new NuevoPedido(null, true, 0).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> JcbProveedor;
+    private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnCancelar1;
-    private javax.swing.JButton btnGuardar1;
-    private javax.swing.JButton btnGuardar3;
+    private javax.swing.JButton btnCrearPedido;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable3;
-    private javax.swing.JTextField txtBuscar10;
-    private javax.swing.JTextField txtBuscar8;
-    private javax.swing.JTextField txtBuscar9;
+    private javax.swing.JComboBox<String> jcbProducto;
+    private javax.swing.JTextField txtCantidad;
+    private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 }

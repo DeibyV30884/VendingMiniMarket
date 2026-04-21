@@ -4,20 +4,111 @@
  */
 package com.vendingminimarket.vista;
 
+import com.vendingminimarket.conexion.ConexionDB;
+import java.sql.CallableStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
- * @author deiby
+ * @author valeria
  */
 public class GestionPedidos extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GestionPedidos.class.getName());
+
+    private String nombre;
+    private String rol;
+    private int idUsuario;
 
     /**
      * Creates new form GestionPedidos
      */
-    public GestionPedidos() {
+    public GestionPedidos(String nombre, String rol, int idUsuario) {
+        this.nombre = nombre;
+        this.rol = rol;
+        this.idUsuario = idUsuario;
         initComponents();
+        ((DefaultTableModel) jTable3.getModel()).setRowCount(0);
+        ((DefaultTableModel) jTable4.getModel()).setRowCount(0);
+        configurarPermisos();
+        cargarPedidosPendientes();
+        cargarHistorial();
     }
+
+    private void configurarPermisos() {
+        boolean esAdmin = rol.equalsIgnoreCase("Administrador");
+        btnCancelar1.setVisible(esAdmin);
+    }
+
+private void cargarPedidosPendientes() {
+    try {
+        CallableStatement cs = ConexionDB.getConexion().prepareCall("{? = CALL PKG_PEDIDO.FN_LISTAR_PEDIDOS_PENDIENTES()}");
+        cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+        cs.execute();
+
+        ResultSet rs = (ResultSet) cs.getObject(1);
+        DefaultTableModel modelo = (DefaultTableModel) jTable3.getModel();
+        modelo.setRowCount(0);
+
+        while (rs.next()) {
+            modelo.addRow(new Object[]{
+                rs.getInt("ID_PEDIDO"),
+                rs.getString("NOMBRE_PROVEEDOR"),
+                rs.getString("FECHA"),
+                rs.getDouble("TOTAL"),
+                rs.getString("ESTADO"),
+                false
+            });
+        }
+        rs.close();
+        cs.close();
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this,
+                "Error cargando pedidos pendientes: " + e.getMessage());
+    }
+}
+
+private void cargarHistorial() {
+    try {
+        CallableStatement cs = ConexionDB.getConexion().prepareCall("{? = CALL PKG_PEDIDO.FN_LISTAR_HISTORIAL_PEDIDOS()}");
+        cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+        cs.execute();
+
+        ResultSet rs = (ResultSet) cs.getObject(1);
+        DefaultTableModel modelo = (DefaultTableModel) jTable4.getModel();
+        modelo.setRowCount(0);
+
+        while (rs.next()) {
+            modelo.addRow(new Object[]{
+                rs.getInt("ID_PEDIDO"),
+                rs.getString("NOMBRE_PROVEEDOR"),
+                rs.getString("FECHA"),
+                rs.getDouble("TOTAL"),
+                rs.getString("ESTADO")
+            });
+        }
+        rs.close();
+        cs.close();
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this,
+                "Error cargando historial: " + e.getMessage());
+    }
+}
+
+private int getPedidoSeleccionado() {
+    DefaultTableModel modelo = (DefaultTableModel) jTable3.getModel();
+    for (int i = 0; i < modelo.getRowCount(); i++) {
+        if (Boolean.TRUE.equals(modelo.getValueAt(i, 5))) {
+            return (int) modelo.getValueAt(i, 0);
+        }
+    }
+    return -1;
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -30,12 +121,12 @@ public class GestionPedidos extends javax.swing.JFrame {
 
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btnCancelar = new javax.swing.JButton();
-        btnGuardar = new javax.swing.JButton();
+        btnRefrescar = new javax.swing.JButton();
+        btnNuevoPedido = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnCancelar1 = new javax.swing.JButton();
-        btnCancelar2 = new javax.swing.JButton();
+        btnMarcarResivido = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -51,25 +142,25 @@ public class GestionPedidos extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Arial", 1, 22)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(61, 122, 107));
 
-        btnCancelar.setBackground(new java.awt.Color(255, 255, 255));
-        btnCancelar.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        btnCancelar.setForeground(new java.awt.Color(61, 122, 107));
-        btnCancelar.setText("Refrescar");
-        btnCancelar.setBorderPainted(false);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+        btnRefrescar.setBackground(new java.awt.Color(255, 255, 255));
+        btnRefrescar.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        btnRefrescar.setForeground(new java.awt.Color(61, 122, 107));
+        btnRefrescar.setText("Refrescar");
+        btnRefrescar.setBorderPainted(false);
+        btnRefrescar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
+                btnRefrescarActionPerformed(evt);
             }
         });
 
-        btnGuardar.setBackground(new java.awt.Color(255, 255, 255));
-        btnGuardar.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        btnGuardar.setForeground(new java.awt.Color(61, 122, 107));
-        btnGuardar.setText("+ Nuevo pedido");
-        btnGuardar.setBorderPainted(false);
-        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+        btnNuevoPedido.setBackground(new java.awt.Color(255, 255, 255));
+        btnNuevoPedido.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        btnNuevoPedido.setForeground(new java.awt.Color(61, 122, 107));
+        btnNuevoPedido.setText("+ Nuevo pedido");
+        btnNuevoPedido.setBorderPainted(false);
+        btnNuevoPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardarActionPerformed(evt);
+                btnNuevoPedidoActionPerformed(evt);
             }
         });
 
@@ -94,18 +185,19 @@ public class GestionPedidos extends javax.swing.JFrame {
             }
         });
 
-        btnCancelar2.setBackground(new java.awt.Color(255, 255, 255));
-        btnCancelar2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        btnCancelar2.setForeground(new java.awt.Color(61, 122, 107));
-        btnCancelar2.setText("Marcar como recibido");
-        btnCancelar2.setBorderPainted(false);
-        btnCancelar2.addActionListener(new java.awt.event.ActionListener() {
+        btnMarcarResivido.setBackground(new java.awt.Color(255, 255, 255));
+        btnMarcarResivido.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        btnMarcarResivido.setForeground(new java.awt.Color(61, 122, 107));
+        btnMarcarResivido.setText("Marcar como recibido");
+        btnMarcarResivido.setBorderPainted(false);
+        btnMarcarResivido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelar2ActionPerformed(evt);
+                btnMarcarResividoActionPerformed(evt);
             }
         });
 
         jTable3.setBackground(new java.awt.Color(255, 255, 255));
+        jTable3.setForeground(new java.awt.Color(0, 0, 0));
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -121,7 +213,7 @@ public class GestionPedidos extends javax.swing.JFrame {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -132,10 +224,19 @@ public class GestionPedidos extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable3.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jTable3.setSelectionBackground(new java.awt.Color(0, 0, 0));
         jScrollPane3.setViewportView(jTable3);
+        if (jTable3.getColumnModel().getColumnCount() > 0) {
+            jTable3.getColumnModel().getColumn(0).setResizable(false);
+            jTable3.getColumnModel().getColumn(1).setResizable(false);
+            jTable3.getColumnModel().getColumn(2).setResizable(false);
+            jTable3.getColumnModel().getColumn(3).setResizable(false);
+            jTable3.getColumnModel().getColumn(4).setResizable(false);
+            jTable3.getColumnModel().getColumn(5).setResizable(false);
+        }
 
         jTable4.setBackground(new java.awt.Color(255, 255, 255));
+        jTable4.setForeground(new java.awt.Color(0, 0, 0));
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
@@ -175,15 +276,15 @@ public class GestionPedidos extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(btnCancelar2)
+                                .addComponent(btnMarcarResivido)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnCancelar1))
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(jPanel2Layout.createSequentialGroup()
                                     .addContainerGap()
-                                    .addComponent(btnGuardar)
+                                    .addComponent(btnNuevoPedido)
                                     .addGap(65, 65, 65)
-                                    .addComponent(btnCancelar))
+                                    .addComponent(btnRefrescar))
                                 .addGroup(jPanel2Layout.createSequentialGroup()
                                     .addGap(22, 22, 22)
                                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,7 +296,7 @@ public class GestionPedidos extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane4)))
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 981, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
@@ -208,8 +309,8 @@ public class GestionPedidos extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnRefrescar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNuevoPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -222,7 +323,7 @@ public class GestionPedidos extends javax.swing.JFrame {
                         .addGap(177, 177, 177)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnCancelar1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnCancelar2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(btnMarcarResivido, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(26, Short.MAX_VALUE))
@@ -241,9 +342,9 @@ public class GestionPedidos extends javax.swing.JFrame {
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Gestión de Pedido");
 
-        btnVolver.setBackground(new java.awt.Color(255, 255, 255));
+        btnVolver.setBackground(new java.awt.Color(61, 122, 107));
         btnVolver.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        btnVolver.setForeground(new java.awt.Color(61, 122, 107));
+        btnVolver.setForeground(new java.awt.Color(255, 255, 255));
         btnVolver.setText("Volver");
         btnVolver.setBorderPainted(false);
         btnVolver.addActionListener(new java.awt.event.ActionListener() {
@@ -257,9 +358,9 @@ public class GestionPedidos extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(22, 22, 22)
                 .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 687, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnVolver)
                 .addGap(22, 22, 22))
         );
@@ -291,24 +392,89 @@ public class GestionPedidos extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCancelarActionPerformed
+    private void btnRefrescarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefrescarActionPerformed
+    cargarPedidosPendientes();
+    cargarHistorial();
+    }//GEN-LAST:event_btnRefrescarActionPerformed
 
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarActionPerformed
+    private void btnNuevoPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoPedidoActionPerformed
+    NuevoPedido dialog = new NuevoPedido(this, true, idUsuario);
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    cargarPedidosPendientes();
+    cargarHistorial();
+    }//GEN-LAST:event_btnNuevoPedidoActionPerformed
 
     private void btnCancelar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar1ActionPerformed
-        // TODO add your handling code here:
+    int id = getPedidoSeleccionado();
+    if (id == -1) {
+        JOptionPane.showMessageDialog(this,
+                "Seleccione un pedido de la lista.", "Aviso",
+                JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int confirm = JOptionPane.showConfirmDialog(this,
+            "¿Cancelar el pedido #" + id + "?",
+            "Confirmar cancelación",
+            JOptionPane.YES_NO_OPTION);
+    if (confirm != JOptionPane.YES_OPTION) return;
+
+    try {
+        CallableStatement cs = ConexionDB.getConexion().prepareCall("{CALL PKG_PEDIDO.SP_CANCELAR_PEDIDO(?)}");
+        cs.setInt(1, id);
+        cs.execute();
+        cs.close();
+
+        JOptionPane.showMessageDialog(this, "Pedido cancelado correctamente.");
+        cargarPedidosPendientes();
+        cargarHistorial();
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this,
+                "Error: " + e.getMessage(), "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnCancelar1ActionPerformed
 
-    private void btnCancelar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCancelar2ActionPerformed
+    private void btnMarcarResividoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMarcarResividoActionPerformed
+    int id = getPedidoSeleccionado();
+    if (id == -1) {
+        JOptionPane.showMessageDialog(this,
+                "Seleccione un pedido de la lista.", "Aviso",
+                JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int confirm = JOptionPane.showConfirmDialog(this,
+            "¿Confirmar recepción del pedido #" + id + "?\n" +
+            "Esto actualizará el stock en bodega.",
+            "Confirmar recepción",
+            JOptionPane.YES_NO_OPTION);
+    if (confirm != JOptionPane.YES_OPTION) return;
+
+    try {
+        CallableStatement cs = ConexionDB.getConexion().prepareCall("{CALL PKG_PEDIDO.SP_RECIBIR_PEDIDO(?, ?)}");
+        cs.setInt(1, id);
+        cs.setInt(2, idUsuario);
+        cs.execute();
+        cs.close();
+
+        JOptionPane.showMessageDialog(this,
+                "Pedido #" + id + " marcado como recibido.\n" +
+                "Stock actualizado en bodega.");
+        cargarPedidosPendientes();
+        cargarHistorial();
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this,
+                "Error: " + e.getMessage(), "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnMarcarResividoActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-            new MenuPrincipal("", "").setVisible(true);
+    new MenuPrincipal(nombre, rol, idUsuario).setVisible(true);
     this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
 
@@ -316,32 +482,27 @@ public class GestionPedidos extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            for (javax.swing.UIManager.LookAndFeelInfo info :
+                    javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ReflectiveOperationException |
+                 javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new GestionPedidos().setVisible(true));
+        java.awt.EventQueue.invokeLater(
+                () -> new GestionPedidos("", "", 1).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCancelar1;
-    private javax.swing.JButton btnCancelar2;
-    private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnMarcarResivido;
+    private javax.swing.JButton btnNuevoPedido;
+    private javax.swing.JButton btnRefrescar;
     private javax.swing.JButton btnVolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

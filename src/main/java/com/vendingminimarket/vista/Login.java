@@ -158,21 +158,24 @@ public class Login extends javax.swing.JFrame {
 
         try {
             java.sql.Connection con = com.vendingminimarket.conexion.ConexionDB.getConexion();
-            java.sql.CallableStatement cs = con.prepareCall("{CALL SP_LOGIN(?, ?, ?, ?, ?)}");
+            java.sql.CallableStatement cs = con.prepareCall("{CALL SP_LOGIN(?, ?, ?, ?, ?, ?)}");
 
             cs.setString(1, email);
             cs.setString(2, password);
             cs.registerOutParameter(3, java.sql.Types.VARCHAR);
             cs.registerOutParameter(4, java.sql.Types.VARCHAR);
             cs.registerOutParameter(5, java.sql.Types.NUMERIC);
+            cs.registerOutParameter(6, java.sql.Types.NUMERIC);
 
             cs.execute();
 
             String nombre = cs.getString(3);
             String rol = cs.getString(4);
+            int idUsuario = cs.getInt(6);
             cs.close();
+            
 
-            new MenuPrincipal(nombre, rol).setVisible(true);
+            new MenuPrincipal(nombre, rol, idUsuario).setVisible(true);
             this.dispose();
 
         } catch (java.sql.SQLException e) {
